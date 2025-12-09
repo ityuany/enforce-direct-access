@@ -22,7 +22,9 @@ impl PluginConfig {
     pub fn validate(&self) -> Result<(), String> {
         // 配置验证：paths 不能为空
         if self.paths.is_empty() {
-            return Err("'paths' cannot be empty. Please provide at least one path to check.".to_string());
+            return Err(
+                "'paths' cannot be empty. Please provide at least one path to check.".to_string()
+            );
         }
 
         Ok(())
@@ -35,9 +37,7 @@ pub struct EnforceDirectAccessTransformer {
 
 impl EnforceDirectAccessTransformer {
     pub fn new(config: PluginConfig) -> Self {
-        Self {
-            config_paths: config.paths.into_iter().collect(),
-        }
+        Self { config_paths: config.paths.into_iter().collect() }
     }
 
     /// 构建表达式的完整路径
@@ -54,7 +54,7 @@ impl EnforceDirectAccessTransformer {
                     if let MemberProp::Ident(ident) = &member.prop {
                         parts.insert(0, ident.sym.to_string());
                         current = &member.obj;
-                    } else if let MemberProp::Computed(computed) = &member.prop {
+                    } else if let MemberProp::Computed(_computed) = &member.prop {
                         // 计算属性：obj['prop']
                         // Note: We currently don't support computed properties
                         // This could be enhanced in the future
