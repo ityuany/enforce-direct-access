@@ -15,18 +15,14 @@ use swc_core::ecma::{
 pub struct PluginConfig {
     /// 要检查的对象路径数组
     /// 例如：["process.env", "import.meta.env"]
+    #[serde(default)]
     pub paths: Vec<String>,
 }
 
 impl PluginConfig {
     pub fn validate(&self) -> Result<(), String> {
-        // 配置验证：paths 不能为空
-        if self.paths.is_empty() {
-            return Err(
-                "'paths' cannot be empty. Please provide at least one path to check.".to_string()
-            );
-        }
-
+        // 允许 paths 为空，此时插件不执行任何检查
+        // 这与 Babel 插件的行为保持一致
         Ok(())
     }
 }
@@ -144,6 +140,11 @@ impl EnforceDirectAccessTransformer {
 
     /// 处理可选链表达式
     fn handle_optional_chain_expr(&self, expr: &Expr, span: Span) {
+        // 如果没有配置路径，不执行检查
+        if self.config_paths.is_empty() {
+            return;
+        }
+
         if let Some((expr_path, has_optional)) = self.build_expression_path(expr) {
             if has_optional {
                 if let Some(matched_path) = self.match_config_path(&expr_path) {
@@ -155,6 +156,11 @@ impl EnforceDirectAccessTransformer {
 
     /// 处理解构模式
     fn handle_destructuring(&self, pat: &Pat, init: &Expr, span: Span) {
+        // 如果没有配置路径，不执行检查
+        if self.config_paths.is_empty() {
+            return;
+        }
+
         // 只处理对象解构
         if let Pat::Object(object_pat) = pat {
             // 构建 init 表达式的路径
