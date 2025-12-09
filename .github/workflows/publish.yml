@@ -43,10 +43,10 @@ jobs:
 
       - name: Publish Babel plugin
         run: pnpm --filter @shined/babel-plugin-transform-import-declaration publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # env:
+        #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish SWC plugin
         run: pnpm --filter @shined/swc-plugin-transform-import-declaration publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # env:
+        #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
