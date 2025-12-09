@@ -1,0 +1,52 @@
+name: Publish Packages
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-wasip1
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Babel plugin
+        run: pnpm --filter @shined/babel-plugin-transform-import-declaration run build
+
+      - name: Build SWC plugin
+        run: pnpm --filter @shined/swc-plugin-transform-import-declaration run build
+
+      - name: Publish Babel plugin
+        run: pnpm --filter @shined/babel-plugin-transform-import-declaration publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish SWC plugin
+        run: pnpm --filter @shined/swc-plugin-transform-import-declaration publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
