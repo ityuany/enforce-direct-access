@@ -27,6 +27,10 @@
     "registry": "https://registry.npmjs.org",
     "tag": "alpha"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ityuany/enforce-direct-access.git"
+  },
   "scripts": {
     "build": "lecp",
     "dev": "lecp --watch",

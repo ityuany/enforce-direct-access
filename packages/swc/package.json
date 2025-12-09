@@ -24,6 +24,10 @@
     "registry": "https://registry.npmjs.org",
     "tag": "alpha"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ityuany/enforce-direct-access.git"
+  },
   "scripts": {
     "build": "cargo build --release --target wasm32-wasip1",
     "postbuild": "cp ../../target/wasm32-wasip1/release/swc_plugin_enforce_direct_access.wasm .",
