@@ -1,18 +1,27 @@
-use swc_core::ecma::{
-    ast::Program,
-    visit::{as_folder, FoldWith, VisitMut},
-};
-use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
-
+mod errors;
 mod transform;
 
-pub struct TransformVisitor;
-
-impl VisitMut for TransformVisitor {
-    // Plugin implementation will be added later
-}
+use swc_core::ecma::ast::Program;
+use swc_core::ecma::visit::VisitMutWith;
+use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
+use transform::{EnforceDirectAccessTransformer, PluginConfig};
 
 #[plugin_transform]
-pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
-    program.fold_with(&mut as_folder(TransformVisitor))
+fn process_transform(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
+    let config = serde_json::from_str::<PluginConfig>(
+        &data
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config"),
+    )
+    .expect("invalid config for swc-plugin-enforce-direct-access");
+
+    // 验证配置
+    config
+        .validate()
+        .expect("invalid plugin configuration");
+
+    let mut transformer = EnforceDirectAccessTransformer::new(config);
+    program.visit_mut_with(&mut transformer);
+
+    program
 }

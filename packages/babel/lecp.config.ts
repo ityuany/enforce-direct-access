@@ -1,10 +1,18 @@
 import { defineConfig } from '@shined/lecp';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
-  outDir: 'cjs',
-  format: ['cjs'],
-  dts: true,
+  format: [
+    {
+      entry: 'src/index.ts',
+      mode: 'bundless',
+      type: 'cjs',
+      outDir: 'cjs',
+    },
+  ],
+  dts: {
+    mode: 'bundless',
+    builder: 'swc',
+  },
   clean: true,
   sourcemap: true,
 });

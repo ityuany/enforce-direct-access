@@ -4,8 +4,28 @@ import enforceDirectAccessPlugin from '@shined/babel-plugin-enforce-direct-acces
 import { testCases } from './test-cases';
 
 describe('Babel Plugin E2E Tests', () => {
-  it('should transform code correctly', () => {
-    // Tests will be implemented later
-    expect(true).toBe(true);
+  testCases.forEach((testCase) => {
+    it(testCase.description, () => {
+      const transform = () =>
+        transformSync(testCase.code, {
+          plugins: [[enforceDirectAccessPlugin, testCase.config]],
+          parserOpts: {
+            sourceType: 'module',
+          },
+        });
+
+      if (testCase.shouldError) {
+        expect(transform).toThrow();
+        if (testCase.errorPattern) {
+          try {
+            transform();
+          } catch (error) {
+            expect((error as Error).message).toMatch(testCase.errorPattern);
+          }
+        }
+      } else {
+        expect(transform).not.toThrow();
+      }
+    });
   });
 });
