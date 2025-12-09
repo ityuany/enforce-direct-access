@@ -36,17 +36,17 @@ jobs:
         run: pnpm install
 
       - name: Build Babel plugin
-        run: pnpm --filter @shined/babel-plugin-transform-import-declaration run build
+        run: pnpm --filter @shined/babel-plugin-enforce-direct-access run build
 
       - name: Build SWC plugin
-        run: pnpm --filter @shined/swc-plugin-transform-import-declaration run build
+        run: pnpm --filter @shined/swc-plugin-enforce-direct-access run build
 
       - name: Publish Babel plugin
-        run: pnpm --filter @shined/babel-plugin-transform-import-declaration publish --access public --no-git-checks
+        run: pnpm --filter @shined/babel-plugin-enforce-direct-access publish --access public --no-git-checks
         # env:
         #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish SWC plugin
-        run: pnpm --filter @shined/swc-plugin-transform-import-declaration publish --access public --no-git-checks
+        run: pnpm --filter @shined/swc-plugin-enforce-direct-access publish --access public --no-git-checks
         # env:
         #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
